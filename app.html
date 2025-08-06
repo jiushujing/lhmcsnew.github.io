@@ -2,82 +2,53 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Chat</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
+    <div class="chat-container">
+        <!-- 左侧面板 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>控制面板</h2>
+            </div>
+            <div class="sidebar-content">
+                <div class="control-group">
+                    <label for="system-prompt-input">AI 角色设定 (System Prompt)</label>
+                    <textarea id="system-prompt-input" rows="5" placeholder="例如：你是一个专业的程序员，请用简洁、精准的语言回答问题。"></textarea>
+                </div>
+                <button id="new-chat-btn" class="sidebar-btn">
+                    <i class="fas fa-plus-circle"></i> 新的对话
+                </button>
+                <a href="api_settings.html" target="_blank" class="sidebar-btn">
+                    <i class="fas fa-cog"></i> API 设定
+                </a>
+            </div>
+             <div class="sidebar-footer">
+                <p>由程序员小C生成</p>
+            </div>
+        </div>
 
-    <div class="mobile-container">
-        <!-- 主内容区域 -->
-        <main class="main-content">
-            
-            <!-- 聊天视图 -->
-            <div id="chat-view" class="view active">
-                <div class="chat-header">
-                    <h3>AI 聊天</h3>
-                    <button id="toggle-system-prompt" class="system-prompt-toggle">角色设定</button>
-                </div>
-                <div id="system-prompt-container" class="system-prompt-container hidden">
-                    <textarea id="system-prompt" placeholder="为 AI 设置一个角色，例如：你是一个幽默的诗人。"></textarea>
-                </div>
-                <div class="chat-history" id="chat-history">
-                    <!-- 聊天消息会在这里显示 -->
-                    <div class="chat-message ai-message">
-                        <p>你好！请先在“设定”页面配置好 API，然后我们就可以开始聊天了。</p>
+        <!-- 右侧聊天区域 -->
+        <div class="chat-area">
+            <div id="message-list" class="message-list">
+                <!-- 消息将在这里动态添加 -->
+                <div class="message assistant">
+                    <div class="avatar"><i class="fas fa-robot"></i></div>
+                    <div class="content">
+                        <p>你好！请在左侧设定我的角色，或直接开始聊天。如果还未设置API，请先点击“API设定”。</p>
                     </div>
                 </div>
-                <form class="chat-form" id="chat-form">
-                    <textarea id="user-input" placeholder="输入消息..." rows="1"></textarea>
-                    <button type="submit" id="send-button">发送</button>
-                </form>
             </div>
-
-            <!-- 设置视图 -->
-            <div id="settings-view" class="view">
-                <div class="container">
-                    <div class="page-header">
-                        <h2>API 设定</h2>
-                    </div>
-                    <form id="api-settings-form">
-                        <div class="api-presets">
-                            <button type="button" id="btn-openai" class="preset-button">兼容OpenAI</button>
-                            <button type="button" id="btn-gemini" class="preset-button">Gemini Key</button>
-                        </div>
-                        <div class="form-group">
-                            <label for="api-url">API 地址 (Base URL)</label>
-                            <input type="text" id="api-url" placeholder="格式参考 https://example.com">
-                        </div>
-                        <div class="form-group">
-                            <label for="api-key">密钥 (API Key)</label>
-                            <input type="password" id="api-key" placeholder="请输入API Key">
-                        </div>
-                        <div class="form-group">
-                            <label for="model-select">选择模型</label>
-                            <select id="model-select">
-                                <optgroup id="openai-models" label="OpenAI / 兼容"></optgroup>
-                                <optgroup id="gemini-models" label="Google Gemini"></optgroup>
-                            </select>
-                        </div>
-                        <button type="button" id="fetch-models-button" class="action-button btn-secondary">拉取模型</button>
-                        <div class="btn-group">
-                            <button type="submit" class="action-button btn-primary">保存API设定</button>
-                        </div>
-                    </form>
-                </div>
+            <div class="chat-input-area">
+                <textarea id="chat-input" placeholder="输入消息... (Shift+Enter 换行)" rows="1"></textarea>
+                <button id="send-btn" title="发送">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
             </div>
-
-        </main>
-
-        <!-- 底部导航栏 -->
-        <nav class="navigation-bar">
-            <button id="nav-chat" class="nav-button active">
-                <span>聊天</span>
-            </button>
-            <button id="nav-settings" class="nav-button">
-                <span>设定</span>
-            </button>
-        </nav>
+        </div>
     </div>
 
     <script src="script.js"></script>
