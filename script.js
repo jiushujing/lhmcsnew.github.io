@@ -1,5 +1,12 @@
-document.addEventListener('DOMContentLoaded', () =&gt {
+document.addEventListener('DOMContentLoaded', () => {
     // --- Combined DOM Element References ---
+    // 检查关键元素是否存在，如果不存在则提前终止，防止后续代码出错
+    if (!document.getElementById('chat-view') || !document.getElementById('settings-view')) {
+        // This check is for app.html. If it's index.html, these elements won't exist, which is fine.
+        // We only proceed if the core app elements are present.
+        return;
+    }
+
     const dom = {
         // Main App & Chat
         chatView: document.getElementById('chat-view'),
@@ -35,9 +42,10 @@ document.addEventListener('DOMContentLoaded', () =&gt {
     };
 
     // ==================================================
-    // --- API SETTINGS LOGIC (from api_script.js) ---
+    // --- FUNCTION DEFINITIONS (COMPLETE) ---
     // ==================================================
 
+    // --- API SETTINGS FUNCTIONS ---
     const populateModels = (models, type) => {
         const group = type === 'openai' ? dom.openaiModelsGroup : dom.geminiModelsGroup;
         group.innerHTML = '';
@@ -150,10 +158,7 @@ document.addEventListener('DOMContentLoaded', () =&gt {
         updateApiForm(settings.apiType || 'openai');
     };
 
-    // ===============================================
-    // --- MAIN APP & CHAT LOGIC ---
-    // ===============================================
-
+    // --- MAIN APP & CHAT FUNCTIONS ---
     function switchView(viewToShow) {
         dom.chatView.classList.remove('active');
         dom.settingsView.classList.remove('active');
@@ -277,6 +282,6 @@ document.addEventListener('DOMContentLoaded', () =&gt {
     dom.chatForm.addEventListener('submit', handleChatSubmit);
 
     // --- Initial Load ---
-    loadApiSettings(); // First, load all API settings and populate defaults
-    switchView('chat'); // Then, switch to the default chat view
+    loadApiSettings();
+    switchView('chat');
 });
