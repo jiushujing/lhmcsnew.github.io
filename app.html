@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Chat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="mobile-container">
+        <!-- 主内容区域 -->
+        <main class="main-content">
+            
+            <!-- 聊天视图 -->
+            <div id="chat-view" class="view active">
+                <div class="chat-header">
+                    <h3>AI 聊天</h3>
+                    <button id="toggle-system-prompt" class="system-prompt-toggle">角色设定</button>
+                </div>
+                <div id="system-prompt-container" class="system-prompt-container hidden">
+                    <textarea id="system-prompt" placeholder="为 AI 设置一个角色，例如：你是一个幽默的诗人。"></textarea>
+                </div>
+                <div class="chat-history" id="chat-history">
+                    <!-- 聊天消息会在这里显示 -->
+                    <div class="chat-message ai-message">
+                        <p>你好！请先在“设定”页面配置好 API，然后我们就可以开始聊天了。</p>
+                    </div>
+                </div>
+                <form class="chat-form" id="chat-form">
+                    <textarea id="user-input" placeholder="输入消息..." rows="1"></textarea>
+                    <button type="submit" id="send-button">发送</button>
+                </form>
+            </div>
+
+            <!-- 设置视图 -->
+            <div id="settings-view" class="view">
+                <div class="container">
+                    <div class="page-header">
+                        <h2>API 设定</h2>
+                    </div>
+                    <form id="api-settings-form">
+                        <div class="api-presets">
+                            <button type="button" id="btn-openai" class="preset-button">兼容OpenAI</button>
+                            <button type="button" id="btn-gemini" class="preset-button">Gemini Key</button>
+                        </div>
+                        <div class="form-group">
+                            <label for="api-url">API 地址 (Base URL)</label>
+                            <input type="text" id="api-url" placeholder="格式参考 https://example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="api-key">密钥 (API Key)</label>
+                            <input type="password" id="api-key" placeholder="请输入API Key">
+                        </div>
+                        <div class="form-group">
+                            <label for="model-select">选择模型</label>
+                            <select id="model-select">
+                                <optgroup id="openai-models" label="OpenAI / 兼容"></optgroup>
+                                <optgroup id="gemini-models" label="Google Gemini"></optgroup>
+                            </select>
+                        </div>
+                        <button type="button" id="fetch-models-button" class="action-button btn-secondary">拉取模型</button>
+                        <div class="btn-group">
+                            <button type="submit" class="action-button btn-primary">保存API设定</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- 底部导航栏 -->
+        <nav class="navigation-bar">
+            <button id="nav-chat" class="nav-button active">
+                <span>聊天</span>
+            </button>
+            <button id="nav-settings" class="nav-button">
+                <span>设定</span>
+            </button>
+        </nav>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

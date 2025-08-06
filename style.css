@@ -1,0 +1,179 @@
+/* --- Global & Main App Styles --- */
+:root {
+    --mobile-bg: #f0f2f5;
+    --content-bg: #ffffff;
+    --nav-height: 60px;
+    --primary-color: #007bff;
+    --text-dark: #333;
+    --text-light: #f8f9fa;
+    --border-light: #e9ecef;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+.mobile-container {
+    width: 100%;
+    height: 100%;
+    max-width: 420px;
+    max-height: 850px;
+    background-color: var(--mobile-bg);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 8px solid #111;
+    margin: auto; /* Center container if viewport is larger */
+}
+
+.main-content {
+    flex-grow: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-in-out;
+    background-color: var(--mobile-bg);
+    overflow-y: auto; /* Allow scrolling within view */
+}
+
+.view.active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 1;
+}
+
+/* Chat UI Styles */
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background-color: var(--content-bg);
+    border-bottom: 1px solid var(--border-light);
+    flex-shrink: 0;
+}
+
+.chat-header h3 { margin: 0; font-size: 18px; }
+
+.system-prompt-toggle {
+    background: none; border: 1px solid var(--primary-color);
+    color: var(--primary-color); padding: 5px 10px;
+    border-radius: 5px; cursor: pointer; font-size: 12px;
+}
+
+.system-prompt-container {
+    padding: 5px 15px 10px; background-color: var(--content-bg);
+    border-bottom: 1px solid var(--border-light); flex-shrink: 0;
+}
+.system-prompt-container.hidden { display: none; }
+
+.system-prompt-container textarea {
+    width: 100%; box-sizing: border-box; border: 1px solid var(--border-light);
+    border-radius: 5px; padding: 8px; font-size: 14px; resize: vertical;
+}
+
+.chat-history {
+    flex-grow: 1; padding: 15px; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 12px;
+}
+
+.chat-message { max-width: 80%; padding: 10px 15px; border-radius: 18px; line-height: 1.5; }
+.chat-message p { margin: 0; white-space: pre-wrap; word-wrap: break-word; }
+.user-message { background-color: var(--primary-color); color: var(--text-light); align-self: flex-end; border-bottom-right-radius: 4px; }
+.ai-message { background-color: var(--content-bg); color: var(--text-dark); align-self: flex-start; border: 1px solid var(--border-light); border-bottom-left-radius: 4px; }
+.typing-indicator { align-self: flex-start; color: #888; font-style: italic; }
+.error-message { background-color: #ffebee; color: #c62828; border: 1px solid #ef9a9a; align-self: stretch; max-width: 100%; border-radius: 8px; }
+
+.chat-form {
+    display: flex; padding: 10px; background-color: var(--content-bg);
+    border-top: 1px solid var(--border-light); gap: 10px; align-items: flex-start; flex-shrink: 0;
+}
+.chat-form textarea {
+    flex-grow: 1; border: 1px solid #ccc; border-radius: 20px;
+    padding: 10px 15px; font-size: 16px; resize: none; max-height: 100px; overflow-y: auto;
+}
+.chat-form button {
+    background-color: var(--primary-color); color: white; border: none;
+    border-radius: 50%; width: 44px; height: 44px; font-size: 14px;
+    cursor: pointer; flex-shrink: 0;
+}
+
+/* Navigation Bar Styles */
+.navigation-bar { height: var(--nav-height); display: flex; background-color: var(--content-bg); border-top: 1px solid var(--border-light); flex-shrink: 0; }
+.nav-button { flex-grow: 1; background: none; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; color: #8e8e93; font-size: 16px; }
+.nav-button.active { color: var(--primary-color); font-weight: bold; }
+
+
+/* --- API Settings Styles (from api_style.css) --- */
+.settings-view .container {
+    width: 100%;
+    max-width: 480px;
+    background-color: var(--content-bg); /* Use main content bg */
+    padding: 20px 30px 30px;
+    border-radius: 0; /* No radius inside the view */
+    box-shadow: none; /* No shadow inside the view */
+    box-sizing: border-box;
+}
+
+.page-header {
+    text-align: center; margin-bottom: 25px;
+    border-bottom: 1px solid var(--border-light); padding-bottom: 15px;
+}
+.page-header h2 { margin: 0; font-size: 22px; }
+
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
+.form-group input, .form-group select {
+    width: 100%; padding: 12px; border: 1px solid #e0e0e0;
+    border-radius: 8px; box-sizing: border-box; font-size: 16px;
+    background-color: #f8f9fa;
+}
+.form-group input:focus, .form-group select:focus {
+    outline: none; border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.api-presets { display: flex; gap: 10px; margin-bottom: 20px; }
+.preset-button {
+    flex-grow: 1; padding: 10px 12px; font-size: 14px;
+    border: 1px solid #e0e0e0; background-color: #fff;
+    color: #333; border-radius: 8px; cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+.preset-button.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); font-weight: 500; }
+
+.action-button {
+    width: 100%; padding: 12px; border-radius: 8px; font-size: 16px;
+    font-weight: 500; cursor: pointer; border: none; transition: opacity 0.2s;
+}
+.action-button:hover { opacity: 0.9; }
+
+.btn-primary { background-color: var(--primary-color); color: white; }
+.btn-secondary { background-color: #6c757d; color: white; margin-bottom: 15px; }
+.btn-group { margin-top: 25px; }
+
+#fetch-models-button {
+    background-color: #fff; color: var(--primary-color);
+    border: 1px solid var(--primary-color); margin-bottom: 10px;
+}
+#fetch-models-button:disabled {
+    background-color: #e9ecef; color: #6c757d;
+    border-color: #ced4da; cursor: not-allowed;
+}
