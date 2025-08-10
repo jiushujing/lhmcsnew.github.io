@@ -90,3 +90,25 @@ html, body {
 .btn-group { margin-top: 25px; }
 #fetch-models-button { background-color: #fff; color: var(--primary-accent); border: 1px solid var(--primary-accent); margin-bottom: 10px; }
 #fetch-models-button:disabled { background-color: #e9ecef; color: #6c757d; border-color: #ced4da; cursor: not-allowed; }
+
+/* --- CODE BLOCK STYLES --- */
+.message .content pre {
+    background-color: #282c34; /* atom-one-dark theme background */
+    padding: 15px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.message .content code {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* Inline code style */
+.message .content p code, .message .content li code {
+    background-color: var(--assistant-msg-bg);
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
