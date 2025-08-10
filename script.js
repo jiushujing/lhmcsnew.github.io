@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
         chatInput: document.getElementById('chat-input'),
         sendBtn: document.getElementById('send-btn'),
         newChatBtn: document.getElementById('new-chat-btn'),
+        refreshBtn: document.getElementById('refresh-btn'), // New button
         systemPromptInput: document.getElementById('system-prompt-input')
     };
 
@@ -69,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         messageWrapper.appendChild(avatar);
         messageWrapper.appendChild(content);
         dom.messageList.appendChild(messageWrapper);
-        dom.messageList.scrollTop = dom.messageList.scrollHeight;
+        dom.messageList.parentElement.scrollTop = dom.messageList.parentElement.scrollHeight;
 
         return content;
     };
@@ -101,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } finally {
             isSending = false;
             dom.sendBtn.disabled = false;
-            dom.messageList.scrollTop = dom.messageList.scrollHeight;
+            dom.messageList.parentElement.scrollTop = dom.messageList.parentElement.scrollHeight;
         }
     };
     
@@ -118,6 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const systemPrompt = dom.systemPromptInput.value.trim();
         let messages = [];
         if (systemPrompt) {
+            // For Gemini, system instructions are handled differently, often as the first user message.
+            // For simplicity here, we treat it as a standard system message.
             messages.push({ role: 'system', content: systemPrompt });
         }
         messages = messages.concat(conversationHistory);
@@ -154,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (delta) {
                             finalResponseText += delta;
                             pElement.textContent = finalResponseText;
-                            dom.messageList.scrollTop = dom.messageList.scrollHeight;
+                            dom.messageList.parentElement.scrollTop = dom.messageList.parentElement.scrollHeight;
                         }
                     } catch (e) {
                         console.error("Error parsing stream chunk:", e);
@@ -188,10 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (done) break;
                 
                 buffer += decoder.decode(value, { stream: true });
-                // Gemini stream is not line-delimited JSON, but a stream of JSON objects
-                // We'll just look for text parts for simplicity
                 try {
-                    // This is a simplified parser. A robust one would handle incomplete JSON objects.
                     const jsonObjects = JSON.parse(`[${buffer.replace(/}\s*{/g, '},{')}]`);
                     let combinedText = '';
                     jsonObjects.forEach(obj => {
@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     finalResponseText = combinedText;
                     pElement.textContent = finalResponseText;
-                    dom.messageList.scrollTop = dom.messageList.scrollHeight;
+                    dom.messageList.parentElement.scrollTop = dom.messageList.parentElement.scrollHeight;
                 } catch(e) {
                     // Incomplete JSON, wait for more data
                 }
@@ -216,10 +216,12 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     const handleNewChat = () => {
         conversationHistory = [];
+        // Clear all but the first child (control panel)
         dom.messageList.innerHTML = '';
         addMessageToUI('assistant', '你好！一个全新的对话已经开始。');
         isSending = false;
         dom.sendBtn.disabled = false;
+        dom.chatInput.value = '';
     };
 
     /**
@@ -233,6 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Event Listeners ---
     dom.sendBtn.addEventListener('click', handleSendMessage);
     dom.newChatBtn.addEventListener('click', handleNewChat);
+    dom.refreshBtn.addEventListener('click', handleNewChat); // Added listener for refresh button
     dom.chatInput.addEventListener('input', autoResizeTextarea);
     dom.chatInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
