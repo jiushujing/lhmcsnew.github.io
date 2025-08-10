@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- MAIN CHAT DOM ELEMENTS ---
+    // --- DOM ELEMENTS ---
     const dom = {
+        // Main Chat
         messageList: document.getElementById('message-list'),
         chatInput: document.getElementById('chat-input'),
         sendBtn: document.getElementById('send-btn'),
@@ -9,9 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
         refreshBtn: document.getElementById('refresh-btn'),
         systemPromptInput: document.getElementById('system-prompt-input'),
         apiSettingsBtn: document.getElementById('api-settings-btn'),
-        // --- MODAL & API FORM ELEMENTS ---
+        // Modal & API Form
         modalOverlay: document.getElementById('api-modal-overlay'),
         closeModalBtn: document.getElementById('close-modal-btn'),
+        saveSettingsBtn: document.getElementById('save-settings-btn'),
         apiSettingsForm: document.getElementById('api-settings-form'),
         apiUrlInput: document.getElementById('api-url'),
         apiKeyInput: document.getElementById('api-key'),
@@ -27,18 +29,18 @@ document.addEventListener('DOMContentLoaded', () => {
     let conversationHistory = [];
     let apiSettings = {};
     let isSending = false;
-    let currentApiType = 'openai'; // for API form
+    let currentApiType = 'openai';
     const SETTINGS_KEY = 'aiChatApiSettings';
     const defaultModels = {
         openai: { "gpt-3.5-turbo": "GPT-3.5-Turbo" },
         gemini: { "gemini-pro": "Gemini Pro" }
     };
 
-    // --- MODAL CONTROL FUNCTIONS ---
+    // --- MODAL CONTROL ---
     const openApiModal = () => dom.modalOverlay.classList.add('active');
     const closeApiModal = () => dom.modalOverlay.classList.remove('active');
 
-    // --- API FORM LOGIC (MERGED) ---
+    // --- API FORM LOGIC ---
     const populateModels = (models, type) => {
         const group = type === 'openai' ? dom.openaiModelsGroup : dom.geminiModelsGroup;
         group.innerHTML = '';
@@ -68,12 +70,11 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.apiUrlInput.value = isGemini ? 'https://generativelanguage.googleapis.com' : (settings.openaiApiUrl || '');
         dom.apiKeyInput.value = isGemini ? (settings.geminiApiKey || '') : (settings.openaiApiKey || '');
         dom.apiUrlInput.placeholder = isGemini ? 'Gemini官方地址，无需修改' : '格式参考 https://example.com';
-        dom.apiKeyInput.placeholder = isGemini ? 'AIzaSy... (Gemini API Key)' : 'sk-xxxxxxxxxx';
+        dom.apiKeyInput.placeholder = isGemini ? 'AIzaSy...' : 'sk-xxxxxxxxxx';
         restoreSelection(settings.model);
     };
 
-    const fetchModels = async () => { /* ... (This function is large and unchanged, keeping it folded for brevity) ... */ };
-    fetchModels = async () => {
+    const fetchModels = async () => {
         const apiKey = dom.apiKeyInput.value.trim();
         const previouslySelectedModel = dom.modelSelect.value;
         dom.fetchModelsButton.textContent = '正在拉取...';
@@ -87,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
                 const data = await response.json();
                 fetchedModels = data.data.reduce((acc, model) => ({ ...acc, [model.id]: model.id }), {});
-            } else { // Gemini
+            } else {
                 if (!apiKey) throw new Error('请先填写 Gemini API Key！');
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
                 if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
@@ -122,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
         alert('API设定已保存！');
         closeApiModal();
-        loadAndCheckApiSettings(); // Reload settings for the main app
+        loadAndCheckApiSettings();
     };
     
     const initializeApiForm = () => {
@@ -136,7 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadAndCheckApiSettings = () => {
         const settingsStr = localStorage.getItem(SETTINGS_KEY);
         if (!settingsStr) {
-            alert('尚未配置API，请先完成API设定。');
             openApiModal();
             return false;
         }
@@ -145,15 +145,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const apiKey = apiType === 'gemini' ? apiSettings.geminiApiKey : apiSettings.openaiApiKey;
         const apiUrl = apiType === 'openai' ? apiSettings.openaiApiUrl : '';
         if (!model || !apiKey || (apiType === 'openai' && !apiUrl)) {
-            alert('API配置不完整，请检查API设定。');
             openApiModal();
             return false;
         }
         return true;
     };
 
-    const addMessageToUI = (sender, text) => { /* ... Unchanged ... */ };
-    addMessageToUI = (sender, text) => {
+    const addMessageToUI = (sender, text) => {
         const messageWrapper = document.createElement('div');
         messageWrapper.className = `message ${sender}`;
         const avatar = document.createElement('div');
@@ -175,8 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return content;
     };
 
-    const handleSendMessage = async () => { /* ... Unchanged ... */ };
-    handleSendMessage = async () => {
+    const handleSendMessage = async () => {
         const userInput = dom.chatInput.value.trim();
         if (!userInput || isSending) return;
         if (!loadAndCheckApiSettings()) return;
@@ -199,8 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const callApi = async (targetElement) => { /* ... Unchanged ... */ };
-    callApi = async (targetElement) => {
+    const callApi = async (targetElement) => {
         const { apiType, model } = apiSettings;
         let finalResponseText = '';
         targetElement.innerHTML = '<p></p>';
@@ -225,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const lines = chunk.split('\n').filter(line => line.trim().startsWith('data: '));
                     for (const line of lines) {
                         const jsonStr = line.replace('data: ', '');
-                        if (jsonStr === '[DONE]') break;
+                        if (jsonStr.includes('[DONE]')) continue;
                         try {
                             const parsed = JSON.parse(jsonStr);
                             const delta = parsed.choices[0]?.delta?.content || '';
@@ -234,18 +230,34 @@ document.addEventListener('DOMContentLoaded', () => {
                                 pElement.textContent = finalResponseText;
                                 dom.messageList.parentElement.scrollTop = dom.messageList.parentElement.scrollHeight;
                             }
-                        } catch (e) { /* ignore parsing errors on incomplete chunks */ }
+                        } catch (e) { /* ignore */ }
                     }
                 }
             } else { // Gemini
-                const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?key=${apiSettings.geminiApiKey}`;
-                const geminiContents = messages.map(msg => ({ role: msg.role === 'assistant' ? 'model' : msg.role, parts: [{ text: msg.content }] }));
-                const response = await fetch(geminiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: geminiContents }) });
-                if (!response.ok) throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
-                const text = await response.text();
-                const data = JSON.parse(text.replace(/^,/, ''));
-                finalResponseText = data.candidates[0].content.parts[0].text;
-                pElement.textContent = finalResponseText;
+                 const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?key=${apiSettings.geminiApiKey}&alt=sse`;
+                 const geminiContents = messages.map(msg => ({ role: msg.role === 'assistant' ? 'model' : msg.role, parts: [{ text: msg.content }] }));
+                 const response = await fetch(geminiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: geminiContents }) });
+                 if (!response.ok) throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+                 const reader = response.body.getReader();
+                 const decoder = new TextDecoder();
+                 while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n').filter(line => line.trim().startsWith('data: '));
+                    for (const line of lines) {
+                        const jsonStr = line.replace('data: ', '');
+                        try {
+                            const parsed = JSON.parse(jsonStr);
+                            const delta = parsed.candidates[0]?.content?.parts[0]?.text || '';
+                            if (delta) {
+                                finalResponseText += delta;
+                                pElement.textContent = finalResponseText;
+                                dom.messageList.parentElement.scrollTop = dom.messageList.parentElement.scrollHeight;
+                            }
+                        } catch (e) { /* ignore */ }
+                    }
+                 }
             }
         } catch (error) {
             finalResponseText = `API 请求失败: ${error.message}`;
@@ -257,8 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     
-    const handleNewChat = () => { /* ... Unchanged ... */ };
-    handleNewChat = () => {
+    const handleNewChat = () => {
         conversationHistory = [];
         dom.messageList.innerHTML = '';
         addMessageToUI('assistant', '你好！一个全新的对话已经开始。');
@@ -267,14 +278,12 @@ document.addEventListener('DOMContentLoaded', () => {
         dom.chatInput.value = '';
     };
 
-    const autoResizeTextarea = () => { /* ... Unchanged ... */ };
-    autoResizeTextarea = () => {
+    const autoResizeTextarea = () => {
         dom.chatInput.style.height = 'auto';
         dom.chatInput.style.height = `${dom.chatInput.scrollHeight}px`;
     };
 
     // --- EVENT LISTENERS ---
-    // Main Chat
     dom.sendBtn.addEventListener('click', handleSendMessage);
     dom.newChatBtn.addEventListener('click', handleNewChat);
     dom.refreshBtn.addEventListener('click', handleNewChat);
@@ -285,8 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
             handleSendMessage();
         }
     });
-
-    // Modal & API Form
     dom.apiSettingsBtn.addEventListener('click', openApiModal);
     dom.closeModalBtn.addEventListener('click', closeApiModal);
     dom.modalOverlay.addEventListener('click', (e) => {
@@ -294,10 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     dom.btnOpenAI.addEventListener('click', () => updateApiForm('openai'));
     dom.btnGemini.addEventListener('click', () => updateApiForm('gemini'));
-    dom.apiSettingsForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        saveApiSettings();
-    });
+    dom.saveSettingsBtn.addEventListener('click', saveApiSettings);
     dom.fetchModelsButton.addEventListener('click', fetchModels);
     dom.apiKeyInput.addEventListener('focus', () => { dom.apiKeyInput.type = 'text'; });
     dom.apiKeyInput.addEventListener('blur', () => { dom.apiKeyInput.type = 'password'; });
