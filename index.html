@@ -4,52 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>欢迎 - AI Chat</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Welcome page specific styles -->
+    <!-- 这里内联了样式，避免了对 style.css 的额外请求 -->
     <style>
-        body {
-            background-color: #f0f2f5;
-        }
-        .welcome-container {
-            text-align: center;
-            padding: 40px;
-            background-color: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            max-width: 350px;
-            margin: 0 20px;
-        }
-        .welcome-container h1 {
-            color: #333;
-            margin-bottom: 15px;
-        }
-        .welcome-container p {
-            color: #666;
-            margin-bottom: 30px;
-        }
-        .enter-button {
-            display: inline-block;
-            padding: 12px 40px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: 500;
-            transition: opacity 0.2s;
-        }
-        .enter-button:hover {
-            opacity: 0.9;
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;}
+        .welcome-container { text-align: center; padding: 40px; background-color: white; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); max-width: 350px; margin: 0 20px; }
+        .welcome-container h1 { color: #333; margin-bottom: 15px; }
+        .welcome-container p { color: #666; margin-bottom: 30px; }
+        .enter-button { display: inline-block; padding: 12px 40px; background-color: #007bff; color: white; text-decoration: none; border-radius: 8px; font-size: 18px; font-weight: 500; transition: opacity 0.2s; }
+        .enter-button:hover { opacity: 0.9; }
     </style>
 </head>
-<body style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-    
+<body>
     <div class="welcome-container">
         <h1>AI Chat</h1>
         <p>一个简洁的 AI 聊天应用</p>
         <a href="app.html" class="enter-button">进入应用</a>
     </div>
-
 </body>
 </html>
