@@ -1,5 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // --- CONFIGURE LIBRARIES ---
+    marked.setOptions({
+        breaks: true, // 将换行符渲染为 <br>
+        gfm: true,    // 启用 GitHub Flavored Markdown
+    });
+
     // --- DOM ELEMENTS ---
     const dom = {
         // Main Chat
@@ -159,18 +165,19 @@ document.addEventListener('DOMContentLoaded', () => {
         avatar.innerHTML = `<i class="fas ${sender === 'user' ? 'fa-user' : 'fa-robot'}"></i>`;
         const content = document.createElement('div');
         content.className = 'content';
+
         if (text === '...thinking...') {
              content.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
         } else {
-            const p = document.createElement('p');
-            p.textContent = text;
-            content.appendChild(p);
+            // 使用 marked 将 markdown 文本转换为 HTML
+            content.innerHTML = marked.parse(text);
         }
+
         messageWrapper.appendChild(avatar);
         messageWrapper.appendChild(content);
         dom.messageList.appendChild(messageWrapper);
         dom.messageList.parentElement.scrollTop = dom.messageList.parentElement.scrollHeight;
-        return content;
+        return content; // 返回的是 content div，用于后续更新
     };
 
     const handleSendMessage = async () => {
@@ -199,8 +206,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const callApi = async (targetElement) => {
         const { apiType, model } = apiSettings;
         let finalResponseText = '';
-        targetElement.innerHTML = '<p></p>';
-        const pElement = targetElement.querySelector('p');
+        targetElement.innerHTML = ''; // 清空 "thinking" 指示器
+
         const systemPrompt = dom.systemPromptInput.value.trim();
         let messages = [];
         if (systemPrompt) {
@@ -227,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             const delta = parsed.choices[0]?.delta?.content || '';
                             if (delta) {
                                 finalResponseText += delta;
-                                pElement.textContent = finalResponseText;
+                                targetElement.innerHTML = marked.parse(finalResponseText);
                                 dom.messageList.parentElement.scrollTop = dom.messageList.parentElement.scrollHeight;
                             }
                         } catch (e) { /* ignore */ }
@@ -252,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             const delta = parsed.candidates[0]?.content?.parts[0]?.text || '';
                             if (delta) {
                                 finalResponseText += delta;
-                                pElement.textContent = finalResponseText;
+                                targetElement.innerHTML = marked.parse(finalResponseText);
                                 dom.messageList.parentElement.scrollTop = dom.messageList.parentElement.scrollHeight;
                             }
                         } catch (e) { /* ignore */ }
@@ -260,13 +267,18 @@ document.addEventListener('DOMContentLoaded', () => {
                  }
             }
         } catch (error) {
-            finalResponseText = `API 请求失败: ${error.message}`;
-            pElement.textContent = finalResponseText;
+            finalResponseText = `**API 请求失败:** ${error.message}`;
+            targetElement.innerHTML = marked.parse(finalResponseText);
         }
 
         if (finalResponseText) {
             conversationHistory.push({ role: 'assistant', content: finalResponseText });
         }
+        
+        // 在消息流结束后，对新内容中的所有代码块进行高亮
+        targetElement.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightElement(block);
+        });
     };
     
     const handleNewChat = () => {
