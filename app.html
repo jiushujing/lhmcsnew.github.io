@@ -2,53 +2,58 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AI Chat</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-    <div class="chat-container">
-        <!-- 左侧面板 -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <h2>控制面板</h2>
+    <div class="chat-wrapper">
+        <header class="top-bar">
+            <div class="title-display">
+                <i class="fas fa-check-circle"></i>
+                <span>AI Chat</span>
             </div>
-            <div class="sidebar-content">
+            <button id="refresh-btn" class="icon-btn" title="新对话">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+        </header>
+
+        <main class="main-content">
+            <div class="control-panel">
+                <h2>控制面板</h2>
                 <div class="control-group">
                     <label for="system-prompt-input">AI 角色设定 (System Prompt)</label>
-                    <textarea id="system-prompt-input" rows="5" placeholder="例如：你是一个专业的程序员，请用简洁、精准的语言回答问题。"></textarea>
+                    <textarea id="system-prompt-input" rows="4" placeholder="例如：你是一个专业的程序员，请用简洁、精准的语言回答问题。"></textarea>
                 </div>
-                <button id="new-chat-btn" class="sidebar-btn">
-                    <i class="fas fa-plus-circle"></i> 新的对话
-                </button>
-                <a href="api_settings.html" target="_blank" class="sidebar-btn">
-                    <i class="fas fa-cog"></i> API 设定
-                </a>
+                <div class="button-group">
+                    <button id="new-chat-btn" class="control-btn">
+                        <i class="fas fa-plus"></i> 新的对话
+                    </button>
+                    <a href="api_settings.html" target="_blank" class="control-btn">
+                        <i class="fas fa-cog"></i> API 设定
+                    </a>
+                </div>
+                <p class="credit">由程序员小C生成</p>
             </div>
-             <div class="sidebar-footer">
-                <p>由程序员小C生成</p>
-            </div>
-        </div>
 
-        <!-- 右侧聊天区域 -->
-        <div class="chat-area">
             <div id="message-list" class="message-list">
-                <!-- 消息将在这里动态添加 -->
+                <!-- 初始欢迎消息 -->
                 <div class="message assistant">
                     <div class="avatar"><i class="fas fa-robot"></i></div>
                     <div class="content">
-                        <p>你好！请在左侧设定我的角色，或直接开始聊天。如果还未设置API，请先点击“API设定”。</p>
+                        <p>你好！请在上方设定我的角色，或直接开始聊天。如果还未设置API，请先点击“API设定”。</p>
                     </div>
                 </div>
             </div>
-            <div class="chat-input-area">
-                <textarea id="chat-input" placeholder="输入消息... (Shift+Enter 换行)" rows="1"></textarea>
-                <button id="send-btn" title="发送">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-        </div>
+        </main>
+
+        <footer class="chat-input-area">
+            <textarea id="chat-input" placeholder="输入消息..." rows="1"></textarea>
+            <button id="send-btn" class="icon-btn" title="发送">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </footer>
     </div>
 
     <script src="script.js"></script>
