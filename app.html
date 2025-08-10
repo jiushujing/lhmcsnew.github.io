@@ -24,36 +24,66 @@
                 <h2>控制面板</h2>
                 <div class="control-group">
                     <label for="system-prompt-input">AI 角色设定 (System Prompt)</label>
-                    <textarea id="system-prompt-input" rows="4" placeholder="例如：你是一个专业的程序员，请用简洁、精准的语言回答问题。"></textarea>
+                    <textarea id="system-prompt-input" rows="4" placeholder="例如：你是一个专业的程序员..."></textarea>
                 </div>
                 <div class="button-group">
                     <button id="new-chat-btn" class="control-btn">
                         <i class="fas fa-plus"></i> 新的对话
                     </button>
-                    <a href="api_settings.html" target="_blank" class="control-btn">
+                    <button id="api-settings-btn" class="control-btn">
                         <i class="fas fa-cog"></i> API 设定
-                    </a>
+                    </button>
                 </div>
                 <p class="credit">由程序员小C生成</p>
             </div>
 
             <div id="message-list" class="message-list">
-                <!-- 初始欢迎消息 -->
                 <div class="message assistant">
                     <div class="avatar"><i class="fas fa-robot"></i></div>
-                    <div class="content">
-                        <p>你好！请在上方设定我的角色，或直接开始聊天。如果还未设置API，请先点击“API设定”。</p>
-                    </div>
+                    <div class="content"><p>你好！请在上方设定我的角色，或直接开始聊天。如果还未设置API，请先点击“API设定”。</p></div>
                 </div>
             </div>
         </main>
 
         <footer class="chat-input-area">
             <textarea id="chat-input" placeholder="输入消息..." rows="1"></textarea>
-            <button id="send-btn" class="icon-btn" title="发送">
-                <i class="fas fa-paper-plane"></i>
-            </button>
+            <button id="send-btn" class="icon-btn" title="发送"><i class="fas fa-paper-plane"></i></button>
         </footer>
+    </div>
+
+    <!-- API Settings Modal -->
+    <div id="api-modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <button id="close-modal-btn" class="close-btn">&times;</button>
+            <div class="api-settings-container">
+                <div class="page-header"><h2>API 设定</h2></div>
+                <form id="api-settings-form">
+                    <div class="api-presets">
+                        <button type="button" id="btn-openai" class="preset-button">兼容OpenAI</button>
+                        <button type="button" id="btn-gemini" class="preset-button">Gemini Key</button>
+                    </div>
+                    <div class="form-group">
+                        <label for="api-url">API 地址 (Base URL)</label>
+                        <input type="text" id="api-url" placeholder="格式参考 https://example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="api-key">密钥 (API Key)</label>
+                        <input type="password" id="api-key" placeholder="请输入API Key">
+                    </div>
+                    <div class="form-group">
+                        <label for="model-select">选择模型</label>
+                        <select id="model-select">
+                            <optgroup id="openai-models" label="OpenAI / 兼容"></optgroup>
+                            <optgroup id="gemini-models" label="Google Gemini"></optgroup>
+                        </select>
+                    </div>
+                    <button type="button" id="fetch-models-button" class="action-button btn-secondary">拉取模型</button>
+                    <div class="btn-group">
+                        <button type="submit" class="action-button btn-primary">保存并关闭</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
